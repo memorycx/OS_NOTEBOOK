@@ -1,0 +1,8 @@
+{
+  "name": "os-notebook",
+  "private": true,
+  "description": "南京大学操作系统课程笔记与画板阅读器",
+  "scripts": {
+    "build:slides": "node tools/build-slides.mjs"
+  }
+}

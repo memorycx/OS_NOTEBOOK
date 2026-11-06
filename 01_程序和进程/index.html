@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f2efe8">
+<title>程序和进程 · 画板阅读</title>
+<link rel="stylesheet" href="../assets/reader/reader.css?v=d8f6bf8f">
+</head>
+<body>
+<div class="reader" id="reader"
+     data-src="../assets/slides/01_%E7%A8%8B%E5%BA%8F%E5%92%8C%E8%BF%9B%E7%A8%8B.json"
+     data-note="01_程序和进程.html"
+     data-home="../index.html">
+  <header class="topbar">
+    <a class="brand" href="../index.html" aria-label="返回笔记首页">
+      <span class="brand-mark">OS</span>
+      <span class="brand-text">
+        <span class="brand-course">南京大学操作系统课程 · 第五讲</span>
+        <span class="brand-deck" data-deck-title>程序和进程</span>
+      </span>
+    </a>
+    <nav class="tools" aria-label="阅读工具">
+      <button class="tool" type="button" data-action="overview" title="画板概览 (Esc)" aria-label="画板概览">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="2.5" width="6" height="6" rx="1"/><rect x="11.5" y="2.5" width="6" height="6" rx="1"/><rect x="2.5" y="11.5" width="6" height="6" rx="1"/><rect x="11.5" y="11.5" width="6" height="6" rx="1"/></svg>
+        <span>概览</span>
+      </button>
+      <a class="tool" data-note-link href="01_程序和进程.html" title="阅读完整 Markdown 笔记" aria-label="阅读完整笔记">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 3.5h8l4 4v9H4z"/><path d="M12 3.5v4h4"/><path d="M7 11h6M7 14h4"/></svg>
+        <span>笔记</span>
+      </a>
+      <button class="tool" type="button" data-action="fullscreen" title="全屏 (F)" aria-label="全屏">
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7 3H3v4M13 3h4v4M7 17H3v-4M13 17h4v-4"/></svg>
+        <span>全屏</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="stage" id="stage">
+    <svg class="board" id="board" xmlns="http://www.w3.org/2000/svg"
+         preserveAspectRatio="xMidYMid meet" role="img"
+         aria-label="程序和进程 · 第五讲 画板"></svg>
+    <button class="edge edge-prev" type="button" data-action="prev" aria-label="上一页">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+    </button>
+    <button class="edge edge-next" type="button" data-action="next" aria-label="下一页">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+    </button>
+    <div class="touch-hint" id="touch-hint">双指缩放 · 拖动查看 · 下方按钮翻页</div>
+    <div class="board-loading" id="board-loading">
+      <span class="spinner" aria-hidden="true"></span>
+      <span>正在展开画板…</span>
+    </div>
+    <div class="board-error" id="board-error" hidden>
+      <strong>画板加载失败</strong>
+      <p>请确认已运行 <code>node tools/build-slides.mjs</code>，或直接阅读完整笔记。</p>
+      <a class="error-link" data-note-link href="01_程序和进程.html">阅读完整笔记 →</a>
+    </div>
+    <noscript>
+      <div class="board-error">
+        <strong>需要启用 JavaScript</strong>
+        <p>画板阅读器需要 JavaScript 才能渲染。你也可以直接阅读完整笔记。</p>
+        <a class="error-link" href="01_程序和进程.html">阅读完整笔记 →</a>
+      </div>
+    </noscript>
+  </main>
+
+  <footer class="bottombar">
+    <div class="chapter">
+      <span class="chapter-num" id="chapter-num">§1</span>
+      <span class="chapter-title" id="chapter-title">画板概览</span>
+    </div>
+    <div class="timeline-wrap">
+      <div class="timeline" id="timeline" role="group" aria-label="幻灯片进度"></div>
+      <div class="hint" id="hint">← → 翻页 · 滚轮缩放 · 拖拽移动 · Esc 概览</div>
+    </div>
+    <div class="pager">
+      <span class="pager-count" id="pager-count" aria-live="polite">1 / 17</span>
+      <div class="pager-buttons">
+        <button class="pager-btn" type="button" data-action="prev" aria-label="上一页">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M12.5 4.5L7 10l5.5 5.5"/></svg>
+        </button>
+        <button class="pager-btn" type="button" data-action="next" aria-label="下一页">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 4.5L13 10l-5.5 5.5"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+</div>
+<script src="../assets/reader/reader.js?v=938e5bf9" defer></script>
+</body>
+</html>

@@ -6,10 +6,19 @@
 
 ## 笔记目录
 
-| 讲次 | 主题 | 关键词 | 笔记 |
-| --- | --- | --- | --- |
-| 第五讲 | 程序和进程 | `fork` / `execve` / 进程树 / Fork Bomb / COW | [阅读](01_程序和进程.md) |
-| 第 6 讲 | 进程的地址空间 | 虚拟内存 / MMU / `mmap` / `ptrace` | [阅读](02_进程的地址空间.md) |
+| 讲次 | 主题 | 关键词 | 画板阅读（在线） | 完整笔记 |
+| --- | --- | --- | --- | --- |
+| 第五讲 | 程序和进程 | `fork` / `execve` / 进程树 / Fork Bomb / COW | [画板](https://memorycx.github.io/OS_NOTEBOOK/01_程序和进程/) | [笔记](01_程序和进程/01_程序和进程.md) |
+| 第六讲 | 进程的地址空间 | 虚拟内存 / MMU / `mmap` / `ptrace` | [画板](https://memorycx.github.io/OS_NOTEBOOK/02_程序的地址空间/) | [笔记](02_程序的地址空间/02_进程的地址空间.md) |
+
+## 画板阅读
+
+在线笔记提供 PPT 式的画板阅读模式：直接读取 Obsidian Excalidraw 画板，按章节自动切分镜头，支持：
+
+- `←` / `→`、空格翻页，`Home` / `End` 跳到首尾；
+- 滚轮或双指缩放、拖拽平移画板；
+- `Esc` 进入画板概览，点击章节直接跳转；
+- 页面地址中的 `#p3` 可直接分享到具体一页。
 
 ## 内容简介
 
@@ -34,10 +43,36 @@
 
 ```text
 .
-├── index.md                  # GitHub Pages 首页
-├── 01_程序和进程.md
-└── 02_进程的地址空间.md
+├── index.md                     # GitHub Pages 首页
+├── 01_程序和进程/
+│   ├── 01_程序和进程.md          # 完整 Markdown 笔记
+│   ├── 01_梳理.excalidraw.md    # Excalidraw 画板源文件
+│   └── index.html               # 画板阅读页（自动生成）
+├── 02_程序的地址空间/
+│   ├── 02_进程的地址空间.md
+│   ├── 02_梳理.excalidraw.md
+│   └── index.html
+├── 03_访问操作系统对象.md
+├── 补充知识/
+├── assets/
+│   ├── fonts/                   # Excalifont（SIL OFL 1.1）
+│   ├── reader/                  # 阅读器样式与脚本
+│   └── slides/                  # 画板数据（自动生成）
+├── tools/
+│   ├── build-slides.mjs         # 从 .excalidraw.md 生成画板数据与阅读页
+│   └── vendor/                  # lz-string（MIT）
+└── .github/workflows/           # 推送后自动重建画板数据
 ```
+
+## 更新画板
+
+修改 `.excalidraw.md` 后在仓库根目录运行：
+
+```bash
+node tools/build-slides.mjs
+```
+
+脚本会解压 Obsidian 的 `compressed-json` 数据、识别画板中的章节框、切分阅读镜头，并重新生成 `assets/slides/*.json` 与对应目录下的 `index.html`。推送到 `main` 后 GitHub Actions 也会自动执行一次并提交生成结果。
 
 ## 在线阅读与部署
 
@@ -60,6 +95,7 @@
 
 - 笔记基于南京大学操作系统课程（2026）整理，仅供学习交流。
 - 代码示例建议在 Linux 环境中编译运行。
+- 画板阅读器使用 [Excalifont](https://plus.excalidraw.com/excalifont)（SIL OFL 1.1）渲染画板中的拉丁字符，许可文本见 `assets/fonts/OFL-Excalifont.txt`。
 - 如果发现错误或有更好的补充，欢迎通过 Issue 或 PR 指出。
 
 ## 相关链接
