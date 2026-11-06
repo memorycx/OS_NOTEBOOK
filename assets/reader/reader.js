@@ -33,7 +33,8 @@
     pinch: null,
     pointers: new Map(),
     hoverSection: null,
-    ticks: [],
+    canvases: null,
+    canvasSegs: [],
   };
 
   let paper;
@@ -563,7 +564,7 @@
     chapterNum.textContent = `§${slide.section + 1}`;
     setChapterTitle(slide.title);
     pagerCount.textContent = `${state.slide + 1} / ${state.deck.slides.length}`;
-    updateTicks();
+    updateCanvasProgress();
     syncPagerButtons();
   }
 
@@ -572,10 +573,7 @@
     chapterNum.textContent = '§';
     setChapterTitle('画板概览 · 点击章节进入');
     pagerCount.textContent = '概览';
-    state.ticks.forEach((tick) => {
-      tick.classList.remove('is-active', 'is-past');
-      tick.classList.add('is-muted');
-    });
+    updateCanvasProgress();
     syncPagerButtons();
   }
 
@@ -588,11 +586,15 @@
     chapterTitle.classList.add('is-changing');
   }
 
-  function updateTicks() {
-    state.ticks.forEach((tick, index) => {
-      tick.classList.remove('is-muted');
-      tick.classList.toggle('is-active', index === state.slide);
-      tick.classList.toggle('is-past', index < state.slide);
+  function updateCanvasProgress() {
+    if (!state.canvasSegs.length) return;
+    const progress = state.deck
+      ? ((state.slide + 1) / state.deck.slides.length) * 100
+      : 0;
+    state.canvasSegs.forEach((seg) => {
+      if (seg.classList.contains('is-active')) {
+        seg.style.setProperty('--progress', `${progress}%`);
+      }
     });
   }
 
@@ -607,25 +609,55 @@
     });
   }
 
-  function buildTimeline() {
+  function buildCanvasAxis() {
     timeline.textContent = '';
-    state.ticks = [];
-    state.deck.slides.forEach((slide, index) => {
-      const tick = document.createElement('button');
-      tick.type = 'button';
-      tick.className = 'tick';
-      if (index === 0 || slide.section !== state.deck.slides[index - 1].section) {
-        tick.classList.add('section-start');
+    state.canvasSegs = [];
+    const currentKey = root.dataset.key;
+    const canvases =
+      Array.isArray(state.canvases) && state.canvases.length
+        ? state.canvases
+        : [
+            {
+              key: currentKey,
+              title: state.deck.title,
+              lecture: state.deck.lecture,
+              slides: state.deck.slides.length,
+            },
+          ];
+
+    canvases.forEach((canvas, index) => {
+      const seg = document.createElement('a');
+      seg.className = 'canvas-seg';
+      seg.href = canvas.href || `../${encodeURIComponent(canvas.key)}/`;
+      seg.title = `${canvas.lecture || `第 ${index + 1} 讲`} · ${canvas.title}（${
+        canvas.slides
+      } 页）`;
+      seg.setAttribute('aria-label', seg.title);
+
+      const lecture = document.createElement('span');
+      lecture.className = 'canvas-seg-lecture';
+      lecture.textContent = canvas.lecture || `第 ${index + 1} 讲`;
+
+      const title = document.createElement('span');
+      title.className = 'canvas-seg-title';
+      title.textContent = canvas.title || canvas.key;
+
+      seg.append(lecture, title);
+
+      if (canvas.key === currentKey) {
+        seg.classList.add('is-active');
+        seg.setAttribute('aria-current', 'page');
+        seg.addEventListener('click', (event) => {
+          event.preventDefault();
+          setSlide(0);
+        });
       }
-      tick.title = `§${slide.section + 1} ${slide.sectionTitle} · 第 ${index + 1} 页`;
-      tick.setAttribute('aria-label', tick.title);
-      tick.addEventListener('click', () => {
-        setSlide(index);
-        tick.blur();
-      });
-      timeline.appendChild(tick);
-      state.ticks.push(tick);
+
+      timeline.appendChild(seg);
+      state.canvasSegs.push(seg);
     });
+
+    updateCanvasProgress();
   }
 
   /* ------------------------------------------------------------------ */
@@ -929,19 +961,37 @@
     svg.classList.add('is-loading');
   }
 
+  async function loadCanvasManifest() {
+    const url = root.dataset.manifest;
+    if (!url) return null;
+    try {
+      const response = await fetch(url, { cache: 'no-cache' });
+      if (!response.ok) return null;
+      const manifest = await response.json();
+      return Array.isArray(manifest.decks) ? manifest.decks : null;
+    } catch (error) {
+      console.warn('画布列表加载失败', error);
+      return null;
+    }
+  }
+
   async function boot() {
     applyNoteLinks();
     try {
-      const response = await fetch(root.dataset.src, { cache: 'no-cache' });
+      const [response, canvases] = await Promise.all([
+        fetch(root.dataset.src, { cache: 'no-cache' }),
+        loadCanvasManifest(),
+      ]);
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const deck = await response.json();
       if (!Array.isArray(deck.slides) || !deck.slides.length) {
         throw new Error('画板数据为空');
       }
       state.deck = deck;
+      state.canvases = canvases;
       document.title = deck.title;
       renderScene();
-      buildTimeline();
+      buildCanvasAxis();
 
       const initial = readHash();
       if (initial && initial.mode === 'overview') {

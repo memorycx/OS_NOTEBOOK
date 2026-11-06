@@ -411,7 +411,9 @@ function renderIndexHtml(deck, key, noteName) {
 <div class="reader" id="reader"
      data-src="../assets/slides/${encodeURIComponent(key)}.json"
      data-note="${escapeHtml(noteName)}"
-     data-home="../index.html">
+     data-home="../index.html"
+     data-key="${escapeHtml(key)}"
+     data-manifest="../assets/slides/manifest.json">
   <header class="topbar">
     <a class="brand" href="../index.html" aria-label="返回笔记首页">
       <span class="brand-mark">OS</span>
@@ -470,8 +472,8 @@ function renderIndexHtml(deck, key, noteName) {
       <span class="chapter-title" id="chapter-title">画板概览</span>
     </div>
     <div class="timeline-wrap">
-      <div class="timeline" id="timeline" role="group" aria-label="幻灯片进度"></div>
-      <div class="hint" id="hint">← → 翻页 · 滚轮缩放 · 拖拽移动 · Esc 概览</div>
+      <div class="timeline" id="timeline" role="navigation" aria-label="画布切换"></div>
+      <div class="hint" id="hint">← → 翻页 · 时间轴切换画布 · Esc 概览</div>
     </div>
     <div class="pager">
       <span class="pager-count" id="pager-count" aria-live="polite">1 / ${deck.slides.length}</span>
@@ -521,6 +523,7 @@ function main() {
 
   fs.mkdirSync(path.join(ROOT, 'assets', 'slides'), { recursive: true });
   let changed = 0;
+  const canvasEntries = [];
 
   for (const boardFile of boards) {
     const dir = path.dirname(boardFile);
@@ -557,9 +560,27 @@ function main() {
       changed++;
     }
 
+    canvasEntries.push({
+      key: folder,
+      title: data.title,
+      lecture: data.lecture,
+      slides: data.slides.length,
+      href: `../${encodeURIComponent(folder)}/`,
+    });
+
     console.log(
       `✓ ${folder}: ${data.elements.length} elements, ${data.sections.length} sections, ${data.slides.length} slides`
     );
+  }
+
+  const manifestPath = path.join(ROOT, 'assets', 'slides', 'manifest.json');
+  const manifest = JSON.stringify({ version: 1, decks: canvasEntries });
+  const previousManifest = fs.existsSync(manifestPath)
+    ? fs.readFileSync(manifestPath, 'utf8')
+    : '';
+  if (previousManifest !== manifest) {
+    fs.writeFileSync(manifestPath, manifest);
+    changed++;
   }
 
   console.log(changed ? `\nUpdated ${changed} generated file(s).` : '\nEverything is up to date.');
