@@ -15,7 +15,7 @@
 }
 
 :root {
-  --page: #f2efe8;
+  --page: #ffffff;
   --paper: #ffffff;
   --ink: #26231e;
   --muted: #857d70;
@@ -96,6 +96,8 @@ a {
   gap: 18px;
   min-height: var(--topbar-h);
   padding: 12px clamp(16px, 3vw, 40px);
+  border-bottom: 1px solid rgba(38, 35, 30, 0.06);
+  background: var(--page);
 }
 
 .brand {
@@ -134,14 +136,6 @@ a {
   flex-direction: column;
   gap: 2px;
   min-width: 0;
-}
-
-.brand-course {
-  color: var(--muted);
-  font-size: 10.5px;
-  font-weight: 600;
-  letter-spacing: 0.14em;
-  white-space: nowrap;
 }
 
 .brand-deck {
@@ -188,7 +182,7 @@ a {
 }
 
 .tool:hover {
-  background: rgba(255, 255, 255, 0.66);
+  background: rgba(38, 35, 30, 0.05);
   border-color: var(--line);
   color: var(--ink);
 }
@@ -211,16 +205,8 @@ a {
 .stage {
   position: relative;
   min-height: 0;
-  margin: 0 clamp(10px, 2.4vw, 28px);
-  padding: 8px;
   overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background-color: var(--page);
-  background-image: radial-gradient(rgba(70, 60, 45, 0.13) 1px, transparent 1px);
-  background-size: 22px 22px;
-  background-position: center;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  background: var(--page);
   isolation: isolate;
 }
 
@@ -342,7 +328,7 @@ a {
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 50%;
-  background: rgba(255, 253, 248, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   color: var(--muted);
   box-shadow: 0 3px 14px rgba(60, 50, 35, 0.1);
   backdrop-filter: blur(8px);
@@ -444,7 +430,7 @@ a {
   color: var(--muted);
   font-size: 13px;
   letter-spacing: 0.04em;
-  background: rgba(242, 239, 232, 0.55);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(4px);
   transition: opacity 0.35s ease, visibility 0.35s ease;
 }
@@ -524,6 +510,8 @@ a {
   gap: clamp(14px, 2.4vw, 30px);
   min-height: var(--bottombar-h);
   padding: 8px clamp(16px, 3vw, 40px) 10px;
+  border-top: 1px solid rgba(38, 35, 30, 0.06);
+  background: var(--page);
 }
 
 .chapter {
@@ -673,7 +661,7 @@ a {
   padding: 0;
   border: 1px solid var(--line);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
+  background: #ffffff;
   color: var(--muted);
   cursor: pointer;
   transition: background 0.16s ease, color 0.16s ease, border-color 0.16s ease;
@@ -690,7 +678,7 @@ a {
 }
 
 .pager-btn:hover:not(:disabled) {
-  background: #fff;
+  background: rgba(38, 35, 30, 0.05);
   border-color: var(--line-strong);
   color: var(--ink);
 }
@@ -731,10 +719,6 @@ a {
     border-radius: 10px;
   }
 
-  .brand-course {
-    display: none;
-  }
-
   .brand-deck {
     font-size: 13.5px;
   }
@@ -747,11 +731,6 @@ a {
     width: 34px;
     justify-content: center;
     padding: 0;
-  }
-
-  .stage {
-    margin: 0 8px;
-    border-radius: 14px;
   }
 
   .bottombar {

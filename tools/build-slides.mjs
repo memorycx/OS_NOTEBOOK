@@ -315,8 +315,11 @@ function buildDeck(dir, boardFile, noteFile) {
   const folder = path.basename(dir);
   const noteText = noteFile ? fs.readFileSync(noteFile, 'utf8') : '';
   const fm = parseFrontmatter(noteText);
-  const fallbackTitle = folder.replace(/^\d+[._-]?/, '');
-  const deckTitle = fm.title || fallbackTitle;
+  const nameSource = noteFile ? path.basename(noteFile, '.md') : folder;
+  const nameTitle = nameSource.includes('_')
+    ? nameSource.slice(nameSource.indexOf('_') + 1)
+    : nameSource;
+  const deckTitle = nameTitle || fm.title || folder;
   const lecture = lectureLabel(fm.lecture);
 
   const elements = scene.elements.filter((e) => !e.isDeleted);
@@ -392,7 +395,7 @@ function assetVersion(relativePath) {
 }
 
 function renderIndexHtml(deck, key, noteName) {
-  const title = `${deck.title}${deck.lecture ? ' · ' + deck.lecture : ''}`;
+  const title = deck.title;
   const cssVersion = assetVersion('assets/reader/reader.css');
   const jsVersion = assetVersion('assets/reader/reader.js');
   return `<!doctype html>
@@ -400,8 +403,8 @@ function renderIndexHtml(deck, key, noteName) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#f2efe8">
-<title>${escapeHtml(deck.title)} · 画板阅读</title>
+<meta name="theme-color" content="#ffffff">
+<title>${escapeHtml(deck.title)}</title>
 <link rel="stylesheet" href="../assets/reader/reader.css?v=${cssVersion}">
 </head>
 <body>
@@ -413,7 +416,6 @@ function renderIndexHtml(deck, key, noteName) {
     <a class="brand" href="../index.html" aria-label="返回笔记首页">
       <span class="brand-mark">OS</span>
       <span class="brand-text">
-        <span class="brand-course">南京大学操作系统课程${deck.lecture ? ' · ' + escapeHtml(deck.lecture) : ''}</span>
         <span class="brand-deck" data-deck-title>${escapeHtml(deck.title)}</span>
       </span>
     </a>

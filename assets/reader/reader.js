@@ -78,25 +78,6 @@
 
     const defs = svgEl('defs');
 
-    const filter = svgEl('filter', {
-      id: 'paper-shadow',
-      x: '-6%',
-      y: '-6%',
-      width: '112%',
-      height: '112%',
-      colorInterpolationFilters: 'sRGB',
-    });
-    filter.appendChild(
-      svgEl('feDropShadow', {
-        dx: 0,
-        dy: 9,
-        stdDeviation: 15,
-        'flood-color': '#4a3f2e',
-        'flood-opacity': 0.18,
-      })
-    );
-    defs.appendChild(filter);
-
     const clip = svgEl('clipPath', { id: 'board-clip', clipPathUnits: 'userSpaceOnUse' });
     clipRect = svgEl('rect', { x: -1000, y: -1000, width: 2000, height: 2000 });
     clip.appendChild(clipRect);
@@ -109,10 +90,6 @@
       width: 2000,
       height: 2000,
       fill: deck.background && deck.background !== 'transparent' ? deck.background : '#ffffff',
-      stroke: '#e5ded0',
-      'stroke-width': 1,
-      'vector-effect': 'non-scaling-stroke',
-      filter: 'url(#paper-shadow)',
     });
 
     const layerRect = svgEl('g', { class: 'layer layer-rect' });
@@ -917,7 +894,7 @@
         throw new Error('画板数据为空');
       }
       state.deck = deck;
-      document.title = `${deck.title} · 画板阅读`;
+      document.title = deck.title;
       renderScene();
       buildTimeline();
 
