@@ -406,6 +406,46 @@
     };
   }
 
+  /**
+   * Expand a camera view to the stage aspect ratio.
+   * The limiting dimension (and therefore the content scale) stays the same,
+   * so the board fills the stage without cropping anything. Extra room is
+   * revealed to the right/below, keeping the slide's top-left anchored.
+   */
+  function fillStage(view) {
+    const rect = stage.getBoundingClientRect();
+    if (!rect.width || !rect.height) return view;
+    const stageAspect = rect.width / rect.height;
+    const viewAspect = view.w / view.h;
+    if (!Number.isFinite(stageAspect) || Math.abs(stageAspect - viewAspect) < 0.001) {
+      return view;
+    }
+    if (stageAspect > viewAspect) {
+      const w = view.h * stageAspect;
+      return { x: view.x + view.w / 2 - w / 2, y: view.y, w, h: view.h };
+    }
+    return { x: view.x, y: view.y, w: view.w, h: view.w / stageAspect };
+  }
+
+  let resizeFrame = 0;
+
+  function fitToStage() {
+    if (!state.deck) return;
+    cancelAnimationFrame(resizeFrame);
+    cancelAnimationFrame(state.raf);
+    resizeFrame = requestAnimationFrame(() => {
+      if (state.mode === 'slide') {
+        const slide = state.deck.slides[state.slide];
+        state.view = fillStage({ x: slide.x, y: slide.y, w: slide.w, h: slide.h });
+      } else if (state.mode === 'overview') {
+        state.view = fillStage(overviewTarget());
+      } else {
+        state.view = fillStage(state.view);
+      }
+      applyView();
+    });
+  }
+
   /** Rendered position of the paper (viewBox) inside the SVG element. */
   function paperBox(view) {
     const rect = svg.getBoundingClientRect();
@@ -485,7 +525,10 @@
     if (overviewButton) overviewButton.classList.remove('is-active');
 
     const slide = slides[state.slide];
-    animateTo({ x: slide.x, y: slide.y, w: slide.w, h: slide.h }, animate ? 640 : 0);
+    animateTo(
+      fillStage({ x: slide.x, y: slide.y, w: slide.w, h: slide.h }),
+      animate ? 640 : 0
+    );
     syncSlideUI();
     svg.setAttribute('aria-label', `${slide.sectionTitle} · ${slide.title}`);
     if (updateHash) writeHash();
@@ -498,7 +541,7 @@
     state.hoverSection = null;
     root.classList.add('is-overview');
     if (overviewButton) overviewButton.classList.add('is-active');
-    animateTo(overviewTarget(), animate ? 720 : 0);
+    animateTo(fillStage(overviewTarget()), animate ? 720 : 0);
     syncOverviewUI();
     showSectionLabel(null);
     svg.setAttribute('aria-label', `${state.deck.title} · 画板概览`);
@@ -836,6 +879,8 @@
         } else if (action === 'fullscreen') toggleFullscreen();
       });
     });
+
+    window.addEventListener('resize', fitToStage);
 
     window.addEventListener('hashchange', () => {
       if (!state.deck) return;
